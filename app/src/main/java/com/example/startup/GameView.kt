@@ -1,26 +1,82 @@
 package com.example.startup
 
-import android.app.Activity
 import android.content.Context
-import android.content.Intent
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.util.AttributeSet
+import android.util.Log
 import android.view.SurfaceHolder
 import android.view.SurfaceView
 import com.example.core.GameThread
 import com.example.entity.EnemySpaceShip
-import com.example.entity.PlayerSpaceShip
 import com.example.game.R
 
-class GameView(context: Context, attributes: AttributeSet) : SurfaceView(context, attributes), SurfaceHolder.Callback {
+class GameView(context: Context, attributes: AttributeSet) : SurfaceView(context, attributes),
+    SurfaceHolder.Callback {
     private val thread: GameThread
+    private var enemySpaceShipsCount: Int = 20
+    private var enemySpaceShips: MutableList<EnemySpaceShip> = mutableListOf()
+    private val screenHeight = context.resources.displayMetrics.heightPixels
 
+    // BitmapFactory.decodeResource(
+    //        context.resources,
+    //        R.drawable.shot
+    //    )
     init {
         holder.addCallback(this)
         thread = GameThread(holder, this)
     }
+
+    fun update() {
+        for (enemySpaceShip in enemySpaceShips) {
+            if (enemySpaceShip.y > screenHeight + enemySpaceShip.h) {
+                enemySpaceShips.remove(enemySpaceShip)
+            } else {
+                enemySpaceShip.update()
+            }
+        }
+    }
+
+    override fun draw(canvas: Canvas) {
+        super.draw(canvas)
+        for (enemySpaceShip in enemySpaceShips) {
+            Log.d("debug", "Enemy: ${enemySpaceShip.x}, ${enemySpaceShip.y}")
+            enemySpaceShip.draw(canvas)
+        }
+    }
+
+    override fun surfaceCreated(holder: SurfaceHolder) {
+        thread.setRunning(true)
+        thread.start()
+        for (i in 0..enemySpaceShipsCount) {
+            enemySpaceShips.add(
+                EnemySpaceShip(
+                    BitmapFactory.decodeResource(
+                        resources,
+                        R.drawable.enemy_ship
+                    )
+                )
+            )
+        }
+    }
+
+    override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {
+        Log.d("debug", "surfaceChanged")
+    }
+
+    override fun surfaceDestroyed(holder: SurfaceHolder) {
+        var retry: Boolean = true
+        while (retry) {
+            try {
+                thread.setRunning(false)
+                thread.join()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+            retry = false
+        }
+    }
+
 
 }
 

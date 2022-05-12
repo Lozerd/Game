@@ -2,9 +2,9 @@ package com.example.core
 
 import android.graphics.Canvas
 import android.view.SurfaceHolder
-import com.example.startup.Game
+import com.example.startup.GameView
 
-class GameThread(private val surfaceHolder: SurfaceHolder, private val game: Game) : Thread() {
+class GameThread(private val surfaceHolder: SurfaceHolder, private val game: GameView) : Thread() {
     companion object {
         private var canvas: Canvas? = null
     }
@@ -49,5 +49,9 @@ class GameThread(private val surfaceHolder: SurfaceHolder, private val game: Gam
                 e.printStackTrace()
             }
         }
+    }
+
+    fun setRunning(isRunning: Boolean){
+        running = isRunning
     }
 }

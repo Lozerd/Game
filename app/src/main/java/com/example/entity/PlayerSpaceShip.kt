@@ -1,11 +1,14 @@
 package com.example.entity
 
-import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import com.example.game.R
 
-class PlayerSpaceShip(context: Context): SpaceShip(context) {
+class PlayerSpaceShip(image: Bitmap): SpaceShip(image) {
     val life = 5
+    init {
+        x = screenWidth / 2
+        y = screenHeight / 2
+        xVelocity = 50
+        yVelocity = 50
+    }
 //    val image: Bitmap? = BitmapFactory.decodeResource(context.resources, R.drawable.player_ship)
 }
