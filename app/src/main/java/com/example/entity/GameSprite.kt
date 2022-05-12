@@ -24,6 +24,6 @@ abstract class GameSprite(var image: Bitmap) {
     open fun draw(canvas: Canvas) = canvas.drawBitmap(image, x.toFloat(), y.toFloat(), null)
 
     open fun update() {
-        throw NotImplementedError("Must be implemented in subclasses")
+
     }
 }

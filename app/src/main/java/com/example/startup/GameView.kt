@@ -9,13 +9,15 @@ import android.view.SurfaceHolder
 import android.view.SurfaceView
 import com.example.core.GameThread
 import com.example.entity.EnemySpaceShip
+import com.example.entity.Shot
 import com.example.game.R
 
 class GameView(context: Context, attributes: AttributeSet) : SurfaceView(context, attributes),
     SurfaceHolder.Callback {
     private val thread: GameThread
-    private var enemySpaceShipsCount: Int = 20
+    private var enemySpaceShipsCount: Int = 10
     private var enemySpaceShips: MutableList<EnemySpaceShip> = mutableListOf()
+    private var Shots: MutableList<Shot> = mutableListOf()
     private val screenHeight = context.resources.displayMetrics.heightPixels
 
     // BitmapFactory.decodeResource(
@@ -28,25 +30,36 @@ class GameView(context: Context, attributes: AttributeSet) : SurfaceView(context
     }
 
     fun update() {
-        for (enemySpaceShip in enemySpaceShips) {
-            if (enemySpaceShip.y > screenHeight + enemySpaceShip.h) {
-                enemySpaceShips.remove(enemySpaceShip)
-            } else {
-                enemySpaceShip.update()
+        for (enemySpaceShip: EnemySpaceShip in enemySpaceShips) {
+            enemySpaceShip.update()
+            val shot = enemySpaceShip.shoot(context)
+            if (shot != null) {
+                Shots.add(shot)
             }
         }
+        enemySpaceShips.forEach { }
+        Shots.forEach { shot: Shot -> shot.update() }
+//        enemySpaceShips.forEach { item -> Shots.add(item.shoot(context)) }
+//        Shots.forEach { shot ->
+//            run {
+//                if (shot.y < screenHeight)
+//                    shot.update()
+//            }
+//        }
+
+//        for (enemySpaceShip in enemySpaceShips) {
+//            if (enemySpaceShip.y > screenHeight) {
+//                enemySpaceShips.remove(enemySpaceShip)
+//            } else {
+//                enemySpaceShip.update()
+//            }
+//        }
     }
 
     override fun draw(canvas: Canvas) {
         super.draw(canvas)
-//        for (index in 0..enemySpaceShips.size){
-//           Log.d("debug", "Enemy #${index}: ${enemySpaceShips[index].y}")
-//            enemySpaceShips[index].draw(canvas)
-//        }
-        for (enemySpaceShip in enemySpaceShips) {
-            Log.d("debug", "Enemy: ${enemySpaceShip.y}")
-            enemySpaceShip.draw(canvas)
-        }
+        enemySpaceShips.forEach { enemySpaceShip -> enemySpaceShip.draw(canvas) }
+        Shots.forEach { shot -> shot.draw(canvas) }
     }
 
     override fun surfaceCreated(holder: SurfaceHolder) {
