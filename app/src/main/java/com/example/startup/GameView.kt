@@ -29,25 +29,27 @@ class GameView(context: Context, attributes: AttributeSet) : SurfaceView(context
 
     fun update() {
         for (enemySpaceShip in enemySpaceShips) {
-            if (enemySpaceShip.y > screenHeight + enemySpaceShip.h) {
-                enemySpaceShips.remove(enemySpaceShip)
-            } else {
+//            if (enemySpaceShip.y > screenHeight + enemySpaceShip.h) {
+//                enemySpaceShips.remove(enemySpaceShip)
+//            } else {
                 enemySpaceShip.update()
-            }
+//            }
         }
     }
 
     override fun draw(canvas: Canvas) {
         super.draw(canvas)
+//        for (index in 0..enemySpaceShips.size){
+//           Log.d("debug", "Enemy #${index}: ${enemySpaceShips[index].y}")
+//            enemySpaceShips[index].draw(canvas)
+//        }
         for (enemySpaceShip in enemySpaceShips) {
-            Log.d("debug", "Enemy: ${enemySpaceShip.x}, ${enemySpaceShip.y}")
+            Log.d("debug", "Enemy: ${enemySpaceShip.y}")
             enemySpaceShip.draw(canvas)
         }
     }
 
     override fun surfaceCreated(holder: SurfaceHolder) {
-        thread.setRunning(true)
-        thread.start()
         for (i in 0..enemySpaceShipsCount) {
             enemySpaceShips.add(
                 EnemySpaceShip(
@@ -58,10 +60,12 @@ class GameView(context: Context, attributes: AttributeSet) : SurfaceView(context
                 )
             )
         }
+        thread.setRunning(true)
+        thread.start()
+
     }
 
     override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {
-        Log.d("debug", "surfaceChanged")
     }
 
     override fun surfaceDestroyed(holder: SurfaceHolder) {

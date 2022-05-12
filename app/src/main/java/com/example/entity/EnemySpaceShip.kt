@@ -23,6 +23,11 @@ class EnemySpaceShip(image: Bitmap): SpaceShip(image) {
         /*
             Move EnemySpaceShip down by yVelocity
          */
+        // mb needed  || x < image.width
+        if (y > screenHeight) {
+            y = 0//-(screenHeight * 1.5).toInt()
+        }
+
         y += yVelocity
     }
 }
