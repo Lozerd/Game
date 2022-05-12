@@ -29,11 +29,11 @@ class GameView(context: Context, attributes: AttributeSet) : SurfaceView(context
 
     fun update() {
         for (enemySpaceShip in enemySpaceShips) {
-//            if (enemySpaceShip.y > screenHeight + enemySpaceShip.h) {
-//                enemySpaceShips.remove(enemySpaceShip)
-//            } else {
+            if (enemySpaceShip.y > screenHeight + enemySpaceShip.h) {
+                enemySpaceShips.remove(enemySpaceShip)
+            } else {
                 enemySpaceShip.update()
-//            }
+            }
         }
     }
 
