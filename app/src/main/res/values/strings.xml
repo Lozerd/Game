@@ -1,4 +1,5 @@
 <resources>
     <string name="play_button">Play</string>
     <string name="text_under_button">Play</string>
+    <string name="game_title">Space Shooter</string>
 </resources>
