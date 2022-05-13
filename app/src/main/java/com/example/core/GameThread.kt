@@ -2,7 +2,6 @@ package com.example.core
 
 import android.graphics.Canvas
 import android.view.SurfaceHolder
-import com.example.startup.GameView
 
 class GameThread(private val surfaceHolder: SurfaceHolder, private val game: GameView) : Thread() {
     companion object {
@@ -19,7 +18,7 @@ class GameThread(private val surfaceHolder: SurfaceHolder, private val game: Gam
         val targetTime = (1000 / targetFPS).toLong()
 
         while (running) {
-            startTime = System.nanoTime()
+            startTime = System.currentTimeMillis()
             canvas = null
 
             try {
@@ -40,14 +39,15 @@ class GameThread(private val surfaceHolder: SurfaceHolder, private val game: Gam
                 }
             }
 
-            timeMillis = (System.nanoTime() - startTime) / 1000000
+            timeMillis = (System.currentTimeMillis() - startTime)
             waitTime = targetTime - timeMillis
 
-            if (waitTime < 0) {
-                waitTime = 0
-            }
             try {
-                sleep(waitTime)
+                if (waitTime > 0) {
+                    sleep(waitTime)
+                } else {
+                    sleep(10)
+                }
             } catch (e: Exception) {
                 e.printStackTrace()
             }

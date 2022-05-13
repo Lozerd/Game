@@ -19,7 +19,7 @@ class Startup : AppCompatActivity() {
             startActivity(Intent(this, Game::class.java))
             finish()
         } catch (e: Exception) {
-            Log.d("debug", "${e.message.toString()}")
+            Log.d("debug", e.message.toString())
         }
 
     }

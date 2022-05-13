@@ -14,8 +14,8 @@ class EnemySpaceShip(image: Bitmap) : SpaceShip(image) {
     init {
         x = ThreadLocalRandom.current().nextInt(screenWidth - image.width)
         y = 0
-        yVelocity = 10 // 20 + ThreadLocalRandom.current().nextInt(5, 25)
-        shotCooldown = 20
+        yVelocity = 5 + ThreadLocalRandom.current().nextInt(5, 25)
+        shotCooldown = yVelocity + 10
     }
 
     fun shoot(context: Context): Shot? {
