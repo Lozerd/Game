@@ -43,6 +43,9 @@ class GameThread(private val surfaceHolder: SurfaceHolder, private val game: Gam
             timeMillis = (System.nanoTime() - startTime) / 1000000
             waitTime = targetTime - timeMillis
 
+            if (waitTime < 0) {
+                waitTime = 0
+            }
             try {
                 sleep(waitTime)
             } catch (e: Exception) {
@@ -51,7 +54,7 @@ class GameThread(private val surfaceHolder: SurfaceHolder, private val game: Gam
         }
     }
 
-    fun setRunning(isRunning: Boolean){
+    fun setRunning(isRunning: Boolean) {
         running = isRunning
     }
 }

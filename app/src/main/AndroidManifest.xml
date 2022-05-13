@@ -26,6 +26,9 @@
         <activity
             android:name="com.example.startup.Game"
             android:screenOrientation="fullSensor" />
+        <activity
+            android:name="com.example.startup.GameOver"
+            android:screenOrientation="fullSensor" />
     </application>
 
 </manifest>

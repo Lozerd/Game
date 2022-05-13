@@ -1,13 +1,18 @@
 package com.example.startup
 
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.util.AttributeSet
+import android.util.DisplayMetrics
+import android.util.Log
 import android.view.SurfaceHolder
 import android.view.SurfaceView
 import androidx.annotation.WorkerThread
 import com.example.core.GameThread
+import com.example.core.LinkedSet
 import com.example.entity.EnemySpaceShip
 import com.example.entity.Shot
 import com.example.game.R
@@ -19,25 +24,40 @@ import kotlin.concurrent.thread
 class GameView(context: Context, attributes: AttributeSet) : SurfaceView(context, attributes),
     SurfaceHolder.Callback {
     private val thread: GameThread
-    private var enemySpaceShipsCount: Int = 10
-    private var enemySpaceShips: MutableList<EnemySpaceShip> = mutableListOf()
-    private var Shots: MutableList<Shot> = mutableListOf()
-    private val screenHeight = context.resources.displayMetrics.heightPixels
+    private var enemySpaceShipsCount: Int = 1
+
+    //    private var enemySpaceShips: MutableList<EnemySpaceShip> = mutableListOf()
+    private var enemySpaceShips: LinkedSet<EnemySpaceShip> = LinkedSet()
+    private var Shots: LinkedSet<Shot> = LinkedSet()
+
+    private val screenHeight: Int by lazy { getDisplayMetrics() }
+
 
     init {
         holder.addCallback(this)
         thread = GameThread(holder, this)
     }
 
-    fun update() {
-        updateEnemySpaceShips()
-        Shots.forEach { shot: Shot -> shot.update() }
+    private fun getDisplayMetrics(): Int {
+        return if (android.os.Build.VERSION.SDK_INT > android.os.Build.VERSION_CODES.P) {
+            context.resources.displayMetrics.heightPixels
+        } else { // Api level < 28
+            val metrics = DisplayMetrics()
+            @Suppress("Deprecation")
+            (context as Activity).windowManager.defaultDisplay.getMetrics(metrics)
+            metrics.heightPixels
+        }
     }
 
-    @OptIn(DelicateCoroutinesApi::class)
-    fun updateEnemySpaceShips() = GlobalScope.launch {
+    //    @OptIn(DelicateCoroutinesApi::class)
+    fun update() {
+        updateEnemySpaceShips()
+        updateShots()
+    }
+
+    private fun updateEnemySpaceShips() {
         for (enemySpaceShip: EnemySpaceShip in enemySpaceShips) {
-            if (enemySpaceShip.y > screenHeight + enemySpaceShip.h) {
+            if (enemySpaceShip.y > screenHeight - enemySpaceShip.h) {
                 enemySpaceShips.remove(enemySpaceShip)
             } else {
                 enemySpaceShip.update()
@@ -49,8 +69,26 @@ class GameView(context: Context, attributes: AttributeSet) : SurfaceView(context
         }
     }
 
+    private fun updateShots() {
+        for (shot: Shot in Shots) {
+            if (shot.y > screenHeight - shot.h) {
+                Shots.remove(shot)
+            } else {
+                shot.update()
+            }
+        }
+//        Shots.forEach { shot: Shot -> shot.update() }
+    }
+
     override fun draw(canvas: Canvas) {
         super.draw(canvas)
+        Log.d("debug", "EnemyShips count: ${enemySpaceShips.isEmpty()}")
+        if (enemySpaceShips.isEmpty()) {
+            thread.setRunning(false)
+            val intent = Intent(context, GameOver::class.java)
+            context.startActivity(intent)
+            (context as Activity).finish()
+        }
         enemySpaceShips.forEach { enemySpaceShip -> enemySpaceShip.draw(canvas) }
         Shots.forEach { shot -> shot.draw(canvas) }
     }
@@ -74,7 +112,7 @@ class GameView(context: Context, attributes: AttributeSet) : SurfaceView(context
     }
 
     override fun surfaceDestroyed(holder: SurfaceHolder) {
-        var retry: Boolean = true
+        var retry = true
         while (retry) {
             try {
                 thread.setRunning(false)

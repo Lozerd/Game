@@ -16,7 +16,6 @@ class Shot(image: Bitmap, ship: SpaceShip) : GameSprite(image) {
 
     override fun update() {
         super.update()
-        Log.d("debug", "Shot: ${y}")
         y += yVelocity
     }
 }
