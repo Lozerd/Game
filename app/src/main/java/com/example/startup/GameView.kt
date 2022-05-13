@@ -4,13 +4,17 @@ import android.content.Context
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.util.AttributeSet
-import android.util.Log
 import android.view.SurfaceHolder
 import android.view.SurfaceView
+import androidx.annotation.WorkerThread
 import com.example.core.GameThread
 import com.example.entity.EnemySpaceShip
 import com.example.entity.Shot
 import com.example.game.R
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlin.concurrent.thread
 
 class GameView(context: Context, attributes: AttributeSet) : SurfaceView(context, attributes),
     SurfaceHolder.Callback {
@@ -20,40 +24,29 @@ class GameView(context: Context, attributes: AttributeSet) : SurfaceView(context
     private var Shots: MutableList<Shot> = mutableListOf()
     private val screenHeight = context.resources.displayMetrics.heightPixels
 
-    // BitmapFactory.decodeResource(
-    //        context.resources,
-    //        R.drawable.shot
-    //    )
     init {
         holder.addCallback(this)
         thread = GameThread(holder, this)
     }
 
     fun update() {
+        updateEnemySpaceShips()
+        Shots.forEach { shot: Shot -> shot.update() }
+    }
+
+    @OptIn(DelicateCoroutinesApi::class)
+    fun updateEnemySpaceShips() = GlobalScope.launch {
         for (enemySpaceShip: EnemySpaceShip in enemySpaceShips) {
-            enemySpaceShip.update()
-            val shot = enemySpaceShip.shoot(context)
-            if (shot != null) {
-                Shots.add(shot)
+            if (enemySpaceShip.y > screenHeight + enemySpaceShip.h) {
+                enemySpaceShips.remove(enemySpaceShip)
+            } else {
+                enemySpaceShip.update()
+                val shot = enemySpaceShip.shoot(context)
+                if (shot != null) {
+                    Shots.add(shot)
+                }
             }
         }
-        enemySpaceShips.forEach { }
-        Shots.forEach { shot: Shot -> shot.update() }
-//        enemySpaceShips.forEach { item -> Shots.add(item.shoot(context)) }
-//        Shots.forEach { shot ->
-//            run {
-//                if (shot.y < screenHeight)
-//                    shot.update()
-//            }
-//        }
-
-//        for (enemySpaceShip in enemySpaceShips) {
-//            if (enemySpaceShip.y > screenHeight) {
-//                enemySpaceShips.remove(enemySpaceShip)
-//            } else {
-//                enemySpaceShip.update()
-//            }
-//        }
     }
 
     override fun draw(canvas: Canvas) {
@@ -75,7 +68,6 @@ class GameView(context: Context, attributes: AttributeSet) : SurfaceView(context
         }
         thread.setRunning(true)
         thread.start()
-
     }
 
     override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {

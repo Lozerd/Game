@@ -42,6 +42,8 @@ class EnemySpaceShip(image: Bitmap) : SpaceShip(image) {
         /*
             Move EnemySpaceShip down by yVelocity
          */
-        y += yVelocity
+        if (y < screenHeight + h) {
+            y += yVelocity
+        }
     }
 }
