@@ -3,21 +3,14 @@ package com.example.entity
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.util.Log
 import com.example.game.R
 
 
-abstract class SpaceShip(image: Bitmap) : GameSprite(image) {
+abstract class SpaceShip(image: Bitmap, spaceShipType: SpaceShipType) : GameSprite(image) {
     protected var shotCooldown: Int = 20
     private var shotCooldownCounter = shotCooldown
     protected var spaceShipType: SpaceShipType = SpaceShipType.PLAYER
-    private var spaceShipLife: Int = when (spaceShipType) {
-        SpaceShipType.PLAYER -> 5
-        SpaceShipType.CORVETTE -> 1
-        SpaceShipType.INTERDICTOR -> 2
-        SpaceShipType.VALIANT -> 3
-        SpaceShipType.DREADNOUGHT -> 20
-    }
+    private var spaceShipLife: Int = 0
 
     init {
         yVelocity = when (spaceShipType) {
@@ -25,6 +18,13 @@ abstract class SpaceShip(image: Bitmap) : GameSprite(image) {
             SpaceShipType.CORVETTE -> 5
             SpaceShipType.INTERDICTOR -> 10
             SpaceShipType.VALIANT -> 16
+            SpaceShipType.DREADNOUGHT -> 20
+        }
+        spaceShipLife = when (spaceShipType) {
+            SpaceShipType.PLAYER -> 5
+            SpaceShipType.CORVETTE -> 1
+            SpaceShipType.INTERDICTOR -> 2
+            SpaceShipType.VALIANT -> 3
             SpaceShipType.DREADNOUGHT -> 20
         }
     }

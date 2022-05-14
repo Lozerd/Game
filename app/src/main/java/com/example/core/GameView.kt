@@ -135,7 +135,7 @@ class GameView(
         if (enemySpaceShips.isEmpty()) {
             for (i in 0 until enemySpaceShipsCount) {
                 enemySpaceShips.add(
-                    EnemySpaceShip(enemySpaceShipBitmap)
+                    EnemySpaceShip(enemySpaceShipBitmap, SpaceShipType.CORVETTE)
                 )
             }
         }
