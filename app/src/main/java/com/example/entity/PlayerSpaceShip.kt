@@ -3,12 +3,9 @@ package com.example.entity
 import android.graphics.Bitmap
 
 class PlayerSpaceShip(image: Bitmap): SpaceShip(image) {
-    val life = 5
     init {
+        spaceShipType = SpaceShipType.PLAYER
         x = screenWidth / 2
-        y = screenHeight / 2
-        xVelocity = 50
-        yVelocity = 50
+        y = screenHeight - w * 2
     }
-//    val image: Bitmap? = BitmapFactory.decodeResource(context.resources, R.drawable.player_ship)
 }

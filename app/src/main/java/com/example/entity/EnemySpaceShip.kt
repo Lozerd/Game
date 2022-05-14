@@ -9,40 +9,22 @@ import com.example.game.R
 import java.util.concurrent.ThreadLocalRandom
 
 class EnemySpaceShip(image: Bitmap) : SpaceShip(image) {
-    var shotCooldown: Int
 
     init {
+        spaceShipType = SpaceShipType.VALIANT
         x = ThreadLocalRandom.current().nextInt(screenWidth - image.width)
         y = 0
-        yVelocity = 5 + ThreadLocalRandom.current().nextInt(5, 25)
-        shotCooldown = yVelocity + 10
+        yVelocity = 5 + ThreadLocalRandom.current().nextInt(1, 10)
     }
 
-    fun shoot(context: Context): Shot? {
-        if (shotCooldown == 0) {
-            shotCooldown = 20
-            return Shot(
-                BitmapFactory.decodeResource(
-                    context.resources,
-                    R.drawable.shot
-                ),
-                this
-            )
-        } else {
-            shotCooldown -= 1
-            return null
-        }
-    }
+
 
     override fun draw(canvas: Canvas) {
         canvas.drawBitmap(image, x.toFloat(), y.toFloat(), null)
     }
 
     override fun update() {
-        /*
-            Move EnemySpaceShip down by yVelocity
-         */
-        if (y < screenHeight + h) {
+        if (y < screenHeight - h) {
             y += yVelocity
         }
     }

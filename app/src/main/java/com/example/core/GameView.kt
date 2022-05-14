@@ -8,19 +8,27 @@ import android.graphics.Canvas
 import android.util.AttributeSet
 import android.util.DisplayMetrics
 import android.util.Log
+import android.view.MotionEvent
 import android.view.SurfaceHolder
 import android.view.SurfaceView
 import com.example.entity.EnemySpaceShip
+import com.example.entity.GameSprite
+import com.example.entity.PlayerSpaceShip
 import com.example.entity.Shot
 import com.example.game.R
 import com.example.startup.GameOver
 
-class GameView(context: Context, attributes: AttributeSet) : SurfaceView(context, attributes),
-    SurfaceHolder.Callback {
+class GameView(
+    context: Context,
+    attributes: AttributeSet
+) : SurfaceView(context, attributes), SurfaceHolder.Callback {
     private val thread: GameThread
-    private var enemySpaceShipsCount = 20
 
+    private var playerSpaceShip: PlayerSpaceShip? = null
+
+    private var enemySpaceShipsCount = 20
     private var enemySpaceShips = LinkedSet<EnemySpaceShip>()
+
     private var shots: LinkedSet<Shot> = LinkedSet()
 
     private val screenHeight: Int by lazy { getDisplayMetrics() }
@@ -43,13 +51,23 @@ class GameView(context: Context, attributes: AttributeSet) : SurfaceView(context
     }
 
     fun update() {
+        updatePlayerSpaceShip()
         updateEnemySpaceShips()
         updateShots()
     }
 
+    private fun updatePlayerSpaceShip() {
+        playerSpaceShip?.update()
+        val shot = playerSpaceShip?.shoot(context)
+        if (shot != null) {
+            shots.add(shot)
+        }
+    }
+
     private fun updateEnemySpaceShips() {
         for (enemySpaceShip: EnemySpaceShip in enemySpaceShips) {
-            if (enemySpaceShip.y > screenHeight - enemySpaceShip.h) {
+            Log.d("debug", "${enemySpaceShip.y}")
+            if (enemySpaceShip.y >= screenHeight - enemySpaceShip.h) {
                 enemySpaceShips.remove(enemySpaceShip)
             } else {
                 enemySpaceShip.update()
@@ -63,7 +81,7 @@ class GameView(context: Context, attributes: AttributeSet) : SurfaceView(context
 
     private fun updateShots() {
         for (shot: Shot in shots) {
-            if (shot.y > screenHeight - shot.h) {
+            if (shot.y > screenHeight - shot.h || shot.y == 0) {
                 shots.remove(shot)
             } else {
                 shot.update()
@@ -73,32 +91,49 @@ class GameView(context: Context, attributes: AttributeSet) : SurfaceView(context
 
     override fun draw(canvas: Canvas) {
         super.draw(canvas)
-        Log.d("debug", "EnemyShips count: ${enemySpaceShips.isEmpty()}")
+
         if (enemySpaceShips.isEmpty()) {
             thread.setRunning(false)
             val intent = Intent(context, GameOver::class.java)
             context.startActivity(intent)
             (context as Activity).finish()
         }
+        playerSpaceShip?.draw(canvas)
         enemySpaceShips.forEach { enemySpaceShip -> enemySpaceShip.draw(canvas) }
         shots.forEach { shot -> shot.draw(canvas) }
     }
 
-    override fun surfaceCreated(holder: SurfaceHolder) {
+    private fun drawGameObjects() {
+        val enemySpaceShipBitmap = BitmapFactory.decodeResource(
+            resources,
+            R.drawable.enemy_ship,
+            GameSprite.bitmapOptions
+        )
+
         if (enemySpaceShips.isEmpty()) {
             for (i in 0..enemySpaceShipsCount) {
                 enemySpaceShips.add(
-                    EnemySpaceShip(
-                        BitmapFactory.decodeResource(
-                            resources,
-                            R.drawable.enemy_ship
-                        )
-                    )
+                    EnemySpaceShip(enemySpaceShipBitmap)
                 )
             }
         }
+
+        if (playerSpaceShip == null) {
+            playerSpaceShip = PlayerSpaceShip(
+                BitmapFactory.decodeResource(
+                    resources,
+                    R.drawable.blank_ship,
+                    GameSprite.bitmapOptions
+                )
+            )
+        }
+    }
+
+    override fun surfaceCreated(holder: SurfaceHolder) {
+        drawGameObjects()
+
         thread.setRunning(true)
-        Log.d("debug", "${thread.state}")
+
         if (thread.state == Thread.State.NEW || thread.state == Thread.State.TERMINATED) {
             thread.start()
         }
@@ -120,5 +155,24 @@ class GameView(context: Context, attributes: AttributeSet) : SurfaceView(context
         }
     }
 
+    override fun performClick(): Boolean {
+        return true
+    }
 
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+        super.onTouchEvent(event)
+
+        val touchX = event?.x?.toInt()
+        val touchY = event?.y?.toInt()
+
+        when (event?.action) {
+            MotionEvent.ACTION_MOVE -> {
+                playerSpaceShip?.x = touchX!!
+                playerSpaceShip?.y = touchY!!
+            }
+            MotionEvent.ACTION_UP -> performClick()
+        }
+
+        return true
+    }
 }
