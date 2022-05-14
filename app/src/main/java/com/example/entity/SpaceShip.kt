@@ -3,6 +3,7 @@ package com.example.entity
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.util.Log
 import com.example.game.R
 
 
@@ -18,6 +19,16 @@ abstract class SpaceShip(image: Bitmap) : GameSprite(image) {
         SpaceShipType.DREADNOUGHT -> 20
     }
 
+    init {
+        yVelocity = when (spaceShipType) {
+            SpaceShipType.PLAYER -> 45
+            SpaceShipType.CORVETTE -> 5
+            SpaceShipType.INTERDICTOR -> 10
+            SpaceShipType.VALIANT -> 16
+            SpaceShipType.DREADNOUGHT -> 20
+        }
+    }
+
     fun shoot(context: Context): Shot? {
         return if (shotCooldownCounter == 0) {
             shotCooldownCounter = shotCooldown
@@ -27,8 +38,7 @@ abstract class SpaceShip(image: Bitmap) : GameSprite(image) {
                     R.drawable.shot,
                     bitmapOptions
                 ),
-                this,
-                this is PlayerSpaceShip
+                this
             )
         } else {
             shotCooldownCounter--
@@ -36,16 +46,21 @@ abstract class SpaceShip(image: Bitmap) : GameSprite(image) {
         }
     }
 
-    protected fun checkCollision(shot: Shot): Boolean {
-        val collisionX: Boolean = shot.x + shot.w >= this.x || this.x + this.w >= shot.x
-        val collisionY: Boolean = shot.y + shot.h >= this.y || this.y + this.h >= shot.y
-        return collisionX && collisionY
+    fun hasCollision(shot: Shot): Boolean {
+        return if (shot.ship == this) {
+            false
+        } else {
+            this.x < shot.x + shot.w && this.x + this.w > shot.x && this.y < shot.y + shot.h && this.y + this.h > shot.y
+        }
+
     }
 
     // TODO test how life is decremented
     fun decrementLife() = spaceShipLife--
 
-    protected fun isDestroyed(): Boolean {
+    fun getLife() = spaceShipLife
+
+    fun isDestroyed(): Boolean {
         return spaceShipLife == 0
     }
 }

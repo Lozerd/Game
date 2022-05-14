@@ -7,11 +7,11 @@ import android.util.Log
 import com.example.game.R
 import java.util.concurrent.ThreadLocalRandom
 
-class Shot(image: Bitmap, ship: SpaceShip, val isPlayerShot: Boolean) : GameSprite(image) {
+open class Shot(image: Bitmap, val ship: SpaceShip) : GameSprite(image) {
     init {
         x = ship.x + ship.w / 2
-        y = ship.y
-        yVelocity = if (isPlayerShot) -45 else 30
+        y = ship.y + h + 1
+        yVelocity = if (this.ship is PlayerSpaceShip) -45 else 30
     }
 
     override fun update() {

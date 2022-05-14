@@ -11,10 +11,7 @@ import android.util.Log
 import android.view.MotionEvent
 import android.view.SurfaceHolder
 import android.view.SurfaceView
-import com.example.entity.EnemySpaceShip
-import com.example.entity.GameSprite
-import com.example.entity.PlayerSpaceShip
-import com.example.entity.Shot
+import com.example.entity.*
 import com.example.game.R
 import com.example.startup.GameOver
 
@@ -26,7 +23,7 @@ class GameView(
 
     private var playerSpaceShip: PlayerSpaceShip? = null
 
-    private var enemySpaceShipsCount = 20
+    private var enemySpaceShipsCount = 1
     private var enemySpaceShips = LinkedSet<EnemySpaceShip>()
 
     private var shots: LinkedSet<Shot> = LinkedSet()
@@ -66,7 +63,6 @@ class GameView(
 
     private fun updateEnemySpaceShips() {
         for (enemySpaceShip: EnemySpaceShip in enemySpaceShips) {
-            Log.d("debug", "${enemySpaceShip.y}")
             if (enemySpaceShip.y >= screenHeight - enemySpaceShip.h) {
                 enemySpaceShips.remove(enemySpaceShip)
             } else {
@@ -85,6 +81,28 @@ class GameView(
                 shots.remove(shot)
             } else {
                 shot.update()
+
+                if (playerSpaceShip!!.hasCollision(shot)) {
+                    playerSpaceShip!!.decrementLife()
+                    if (playerSpaceShip!!.isDestroyed()) {
+                        Log.d("debug", "Player died")
+                        stopGame()
+                    }
+                    shots.remove(shot)
+                }
+
+                for (enemySpaceShip in enemySpaceShips) {
+                    if (enemySpaceShip.hasCollision(shot)) {
+                        if (enemySpaceShip.isDestroyed()) {
+                            Log.d("debug", "EnemySpaceShip died")
+                            enemySpaceShips.remove(enemySpaceShip)
+                        } else {
+                            enemySpaceShip.decrementLife()
+                            Log.d("debug", "${enemySpaceShip.getLife()}")
+                            shots.remove(shot)
+                        }
+                    }
+                }
             }
         }
     }
@@ -93,14 +111,18 @@ class GameView(
         super.draw(canvas)
 
         if (enemySpaceShips.isEmpty()) {
-            thread.setRunning(false)
-            val intent = Intent(context, GameOver::class.java)
-            context.startActivity(intent)
-            (context as Activity).finish()
+            stopGame()
         }
         playerSpaceShip?.draw(canvas)
         enemySpaceShips.forEach { enemySpaceShip -> enemySpaceShip.draw(canvas) }
         shots.forEach { shot -> shot.draw(canvas) }
+    }
+
+    private fun stopGame() {
+        thread.setRunning(false)
+        val intent = Intent(context, GameOver::class.java)
+        context.startActivity(intent)
+        (context as Activity).finish()
     }
 
     private fun drawGameObjects() {
@@ -111,7 +133,7 @@ class GameView(
         )
 
         if (enemySpaceShips.isEmpty()) {
-            for (i in 0..enemySpaceShipsCount) {
+            for (i in 0 until enemySpaceShipsCount) {
                 enemySpaceShips.add(
                     EnemySpaceShip(enemySpaceShipBitmap)
                 )
@@ -156,7 +178,7 @@ class GameView(
     }
 
     override fun performClick(): Boolean {
-        return true
+        return super.performClick()
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {

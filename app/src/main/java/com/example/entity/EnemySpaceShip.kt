@@ -11,7 +11,7 @@ import java.util.concurrent.ThreadLocalRandom
 class EnemySpaceShip(image: Bitmap) : SpaceShip(image) {
 
     init {
-        spaceShipType = SpaceShipType.VALIANT
+        spaceShipType = SpaceShipType.CORVETTE
         x = ThreadLocalRandom.current().nextInt(screenWidth - image.width)
         y = 0
         yVelocity = 5 + ThreadLocalRandom.current().nextInt(1, 10)
