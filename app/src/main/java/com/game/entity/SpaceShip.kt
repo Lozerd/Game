@@ -4,12 +4,13 @@ import android.content.Context
 import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.util.Log
 import com.game.R
 
 
 abstract class SpaceShip(
     image: Bitmap,
-    spaceShipType: SpaceShipType
+    val spaceShipType: SpaceShipType
 ) : GameSprite(image) {
     private var spaceShipLife: Int = 0
     private var shotCooldown: Int
@@ -26,23 +27,23 @@ abstract class SpaceShip(
         yVelocity = when (spaceShipType) {
             SpaceShipType.PLAYER -> 45
             SpaceShipType.CORVETTE -> 1
-            SpaceShipType.INTERDICTOR -> 5
-            SpaceShipType.VALIANT -> 8
-            SpaceShipType.DREADNOUGHT -> 15
+            SpaceShipType.INTERDICTOR -> 2
+            SpaceShipType.VALIANT -> 3
+            SpaceShipType.DREADNOUGHT -> 4
         }
         spaceShipLife = when (spaceShipType) {
-            SpaceShipType.PLAYER -> 5
+            SpaceShipType.PLAYER -> 20
             SpaceShipType.CORVETTE -> 1
             SpaceShipType.INTERDICTOR -> 2
             SpaceShipType.VALIANT -> 3
-            SpaceShipType.DREADNOUGHT -> 20
+            SpaceShipType.DREADNOUGHT -> 10
         }
         shotCooldown = when (spaceShipType) {
             SpaceShipType.PLAYER -> 10
-            SpaceShipType.CORVETTE -> 90
-            SpaceShipType.INTERDICTOR -> 80
-            SpaceShipType.VALIANT -> 70
-            SpaceShipType.DREADNOUGHT -> 60
+            SpaceShipType.CORVETTE -> 80
+            SpaceShipType.INTERDICTOR -> 70
+            SpaceShipType.VALIANT -> 60
+            SpaceShipType.DREADNOUGHT -> 50
         }
         shotCooldownCounter = shotCooldown
     }
@@ -62,7 +63,7 @@ abstract class SpaceShip(
     }
 
     fun hasCollision(shot: Shot): Boolean {
-        return if (shot.ship == this) {
+        return if (shot.ship == this || (this is EnemySpaceShip && shot.ship is EnemySpaceShip)) {
             false
         } else {
             this.x < shot.x + shot.w && this.x + this.w > shot.x && this.y < shot.y + shot.h && this.y + this.h > shot.y

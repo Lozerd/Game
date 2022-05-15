@@ -3,7 +3,7 @@ package com.game.core
 import android.graphics.Canvas
 import android.view.SurfaceHolder
 
-class GameThread(private val surfaceHolder: SurfaceHolder, private val game: GameView) : Thread() {
+class UpdateThread(private val game: GameView) : Thread() {
     companion object {
         private var canvas: Canvas? = null
     }
@@ -19,25 +19,7 @@ class GameThread(private val surfaceHolder: SurfaceHolder, private val game: Gam
 
         while (running) {
             startTime = System.currentTimeMillis()
-            canvas = null
-
-            try {
-                canvas = this.surfaceHolder.lockCanvas()
-                synchronized(surfaceHolder) {
-//                    this.game.update()
-                    this.game.draw(canvas!!)
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
-            } finally {
-                if (canvas != null) {
-                    try {
-                        surfaceHolder.unlockCanvasAndPost(canvas)
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                    }
-                }
-            }
+            this.game.update()
 
             timeMillis = (System.currentTimeMillis() - startTime)
             waitTime = targetTime - timeMillis
