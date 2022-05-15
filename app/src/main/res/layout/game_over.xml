@@ -53,4 +53,15 @@
         android:textColor="@color/white"
         android:textSize="24sp" />
 
+    <TextView
+        android:id="@+id/currentLevelGameOver"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="156dp"
+        android:text="@string/currentLevelGameOver"
+        android:textColor="@color/white"
+        android:textSize="36sp" />
+
 </RelativeLayout>

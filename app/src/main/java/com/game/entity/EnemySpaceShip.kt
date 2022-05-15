@@ -4,10 +4,23 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import java.util.concurrent.ThreadLocalRandom
 
-class EnemySpaceShip(image: Bitmap, spaceShipType: SpaceShipType) : SpaceShip(image, spaceShipType) {
+class EnemySpaceShip(
+    image: Bitmap,
+    spaceShipType: SpaceShipType
+) : SpaceShip(image, spaceShipType) {
     init {
         x = ThreadLocalRandom.current().nextInt(screenWidth - image.width)
         y = 0
+    }
+
+    constructor(
+        image: Bitmap,
+        spaceShipType: SpaceShipType,
+        positionX: Int,
+        positionY: Int
+    ) : this(image, spaceShipType) {
+        x = positionX
+        y = positionY
     }
 
     override fun draw(canvas: Canvas) {

@@ -2,4 +2,6 @@
     <string name="play_button">Play</string>
     <string name="text_under_button">Play</string>
     <string name="game_title">Space Shooter</string>
+    <string name="currentLevel">Level %d</string>
+    <string name="currentLevelGameOver">Level %d</string>
 </resources>
