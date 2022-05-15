@@ -1,4 +1,4 @@
-package com.example.core
+package com.game.core
 
 import android.app.Activity
 import android.content.Context
@@ -11,9 +11,9 @@ import android.util.Log
 import android.view.MotionEvent
 import android.view.SurfaceHolder
 import android.view.SurfaceView
-import com.example.entity.*
-import com.example.game.R
-import com.example.startup.GameOver
+import com.game.R
+import com.game.startup.GameOver
+import com.game.entity.*
 
 class GameView(
     context: Context,

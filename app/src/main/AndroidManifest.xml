@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.example.game">
+    package="com.game">
 
     <application
         android:allowBackup="true"
@@ -15,7 +15,7 @@
         tools:targetApi="31"
         >
         <activity
-            android:name="com.example.startup.Startup"
+            android:name="com.game.startup.Startup"
             android:exported="true"
             android:screenOrientation="fullSensor">
             <intent-filter>
@@ -24,10 +24,10 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.example.startup.Game"
+            android:name="com.game.startup.Game"
             android:screenOrientation="fullSensor" />
         <activity
-            android:name="com.example.startup.GameOver"
+            android:name="com.game.startup.GameOver"
             android:screenOrientation="fullSensor" />
     </application>
 

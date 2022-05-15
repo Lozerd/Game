@@ -1,11 +1,6 @@
-package com.example.entity
+package com.game.entity
 
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.Canvas
-import android.util.Log
-import com.example.game.R
-import java.util.concurrent.ThreadLocalRandom
 
 open class Shot(image: Bitmap, val ship: SpaceShip) : GameSprite(image) {
     init {

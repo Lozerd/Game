@@ -1,4 +1,4 @@
-package com.example.game
+package com.game.game
 
 import org.junit.Test
 

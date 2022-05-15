@@ -1,9 +1,9 @@
-package com.example.entity
+package com.game.entity
 
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import com.example.game.R
+import com.game.R
 
 
 abstract class SpaceShip(image: Bitmap, spaceShipType: SpaceShipType) : GameSprite(image) {

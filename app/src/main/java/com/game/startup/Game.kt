@@ -1,4 +1,4 @@
-package com.example.startup
+package com.game.startup
 
 import android.content.Intent
 import android.os.Bundle
@@ -7,8 +7,8 @@ import android.util.Log
 import android.util.Xml
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import com.example.core.GameView
-import com.example.game.R
+import com.game.core.GameView
+import com.game.R
 import org.xmlpull.v1.XmlPullParser
 import java.lang.Exception
 

@@ -1,4 +1,4 @@
-package com.example.core;
+package com.game.core;
 
 import java.util.AbstractSet;
 import java.util.HashMap;

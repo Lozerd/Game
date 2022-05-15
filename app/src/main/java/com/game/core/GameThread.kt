@@ -1,4 +1,4 @@
-package com.example.core
+package com.game.core
 
 import android.graphics.Canvas
 import android.view.SurfaceHolder

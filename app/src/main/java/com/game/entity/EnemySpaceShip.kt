@@ -1,4 +1,4 @@
-package com.example.entity
+package com.game.entity
 
 import android.graphics.Bitmap
 import android.graphics.Canvas

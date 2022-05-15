@@ -1,4 +1,4 @@
-package com.example.entity
+package com.game.entity
 
 enum class SpaceShipType {
     PLAYER,

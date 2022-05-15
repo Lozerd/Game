@@ -1,11 +1,11 @@
-package com.example.startup
+package com.game.startup
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import com.example.game.R
+import com.game.R
 import java.lang.Exception
 
 class Startup : AppCompatActivity() {
