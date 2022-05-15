@@ -166,6 +166,7 @@ class GameView(
             var positionX = 0
             var positionY = 0
             // Draw Corvettes
+            TODO("Add different coefficients to positionX on SpaceShipType")
             for (iterator in 0 until currentLevel.corvetteCount) {
                 enemySpaceShips.add(
                     EnemySpaceShip(
