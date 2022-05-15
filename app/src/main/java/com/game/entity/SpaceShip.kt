@@ -18,7 +18,7 @@ abstract class SpaceShip(
     companion object {
         fun getBitmapResource(resources: Resources, param: Int): Bitmap {
             return BitmapFactory.decodeResource(resources, param, bitmapOptions)
-        }a
+        }
     }
 
 
