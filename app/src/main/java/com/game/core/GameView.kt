@@ -133,6 +133,7 @@ class GameView(
     override fun draw(canvas: Canvas) {
         /* Method that draw every frame on canvas */
         super.draw(canvas)
+        canvas.drawRGB(255,255,255)
         if (enemySpaceShips.isEmpty()) {
             GameView.currentLevel++
             enemySpaceShips = LinkedSet<EnemySpaceShip>()
@@ -166,7 +167,7 @@ class GameView(
             var positionX = 0
             var positionY = 0
             // Draw Corvettes
-            TODO("Add different coefficients to positionX on SpaceShipType")
+//            TODO("Add different coefficients to positionX on SpaceShipType")
             for (iterator in 0 until currentLevel.corvetteCount) {
                 enemySpaceShips.add(
                     EnemySpaceShip(
