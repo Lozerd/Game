@@ -1,5 +1,5 @@
 # Game
-This is the Game for University.
+This is the Game. Made as an assignment from university.
 
 Game genre is space wars.
 Control your spaceship and destroy enemy spaceships with a touch of a finger.
