@@ -14,7 +14,7 @@ class Startup : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.startup)
-        findViewById<TextView>(R.id.currentLevel).text = getString(R.string.currentLevel, GameView.currentLevel)
+        findViewById<TextView>(R.id.currentLevel).text = getString(R.string.currentLevel, GameView.currentLevelInteger)
     }
 
     fun startGame(view: View) {

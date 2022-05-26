@@ -14,7 +14,7 @@ class GameOver : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.game_over)
-        findViewById<TextView>(R.id.currentLevelGameOver).text = getString(R.string.currentLevelGameOver, GameView.currentLevel)
+        findViewById<TextView>(R.id.currentLevelGameOver).text = getString(R.string.currentLevelGameOver, GameView.currentLevelInteger)
     }
 
 

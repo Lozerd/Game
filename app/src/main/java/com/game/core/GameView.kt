@@ -4,22 +4,21 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.util.AttributeSet
 import android.util.DisplayMetrics
-import android.util.Log
 import android.view.MotionEvent
 import android.view.SurfaceHolder
 import android.view.SurfaceView
 import com.game.R
-import com.game.startup.GameOver
 import com.game.entity.*
 import com.game.entity.SpaceShip.Companion.getBitmapResource
 import com.game.level.GameLevel
+import com.game.startup.GameOver
 import com.game.startup.Startup
 import com.game.utils.LinkedSet
 import kotlinx.coroutines.*
+import kotlin.random.Random
 
 class GameView(
     context: Context,
@@ -27,14 +26,14 @@ class GameView(
 ) : SurfaceView(context, attributes), SurfaceHolder.Callback {
 
     companion object {
-        var currentLevel = 1
+        var currentLevelInteger = 6
     }
 
     private val thread: GameThread
     private val updateThread: UpdateThread
     private val updateCoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
-    private val currentLevel: GameLevel = GameLevel(GameView.currentLevel)
+    private val currentLevel: GameLevel = GameLevel(currentLevelInteger)
     private var playerSpaceShip: PlayerSpaceShip? = null
     private val enemySpaceShipBitmaps: Map<SpaceShipType, Bitmap> = mapOf(
         SpaceShipType.CORVETTE to getBitmapResource(resources, R.drawable.corvette_spaceship),
@@ -145,10 +144,9 @@ class GameView(
     override fun draw(canvas: Canvas) {
         /* Method that draw every frame on canvas */
         super.draw(canvas)
-        canvas.drawRGB(255, 255, 255)
 
         if (enemySpaceShips.isEmpty()) {
-            GameView.currentLevel++
+            currentLevelInteger++
             enemySpaceShips = LinkedSet<EnemySpaceShip>()
             shots = LinkedSet<Shot>()
             startNextLevel()
@@ -177,7 +175,7 @@ class GameView(
     private fun drawGameObjects() {
         /* Draw game object for the first time */
         if (enemySpaceShips.isEmpty()) {
-            var positionX = 0
+            var positionX = 100
             var positionY = 0
             // Draw Corvettes
 //            TODO("Add different coefficients to positionX on SpaceShipType")
@@ -203,8 +201,8 @@ class GameView(
                         positionY
                     )
                 )
-                positionY = if (positionX + 100 >= screenWidth) positionY + 100 else positionY
-                positionX = if (positionX + 100 >= screenWidth) 100 else positionX + 100
+                positionY = if (positionX + 150 >= screenWidth) positionY + 100 else positionY
+                positionX = if (positionX + 150 >= screenWidth) 150 else positionX + 150
             }
             // Draw Valiants
             for (iterator in 0 until currentLevel.valiantCount) {
@@ -216,8 +214,8 @@ class GameView(
                         positionY,
                     )
                 )
-                positionY = if (positionX + 100 >= screenWidth) positionY + 100 else positionY
-                positionX = if (positionX + 100 >= screenWidth) 100 else positionX + 100
+                positionY = if (positionX + 125 >= screenWidth) positionY + 100 else positionY
+                positionX = if (positionX + 125 >= screenWidth) 125 else positionX + 125
             }
 
             // Draw Dreadnoughts

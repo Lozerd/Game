@@ -13,7 +13,7 @@ class GameLevel(val id: Int) {
         3 -> 3
         4 -> 4
         5 -> 6
-        else -> 0
+        else -> 6
     }
 
     init {
