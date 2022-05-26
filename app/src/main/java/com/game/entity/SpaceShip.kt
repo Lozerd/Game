@@ -63,6 +63,7 @@ abstract class SpaceShip(
     }
 
     fun hasCollision(shot: Shot): Boolean {
+        // Check collision ship with shot
         return if (shot.ship == this || (this is EnemySpaceShip && shot.ship is EnemySpaceShip)) {
             false
         } else {
@@ -71,7 +72,11 @@ abstract class SpaceShip(
 
     }
 
-    // TODO test how life is decremented
+    fun hasCollision(ship: SpaceShip): Boolean =
+        // check collision ship with another ship
+        this.x < ship.x + ship.w && this.x + this.w > ship.x && this.y < ship.y + ship.h && this.y + this.h > ship.y
+
+
     fun decrementLife() = spaceShipLife--
 
     fun getLife() = spaceShipLife

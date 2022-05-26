@@ -19,9 +19,7 @@ import com.game.entity.SpaceShip.Companion.getBitmapResource
 import com.game.level.GameLevel
 import com.game.startup.Startup
 import com.game.utils.LinkedSet
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 
 class GameView(
     context: Context,
@@ -34,6 +32,8 @@ class GameView(
 
     private val thread: GameThread
     private val updateThread: UpdateThread
+    private val updateCoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+
     private val currentLevel: GameLevel = GameLevel(GameView.currentLevel)
     private var playerSpaceShip: PlayerSpaceShip? = null
     private val enemySpaceShipBitmaps: Map<SpaceShipType, Bitmap> = mapOf(
@@ -44,7 +44,6 @@ class GameView(
         SpaceShipType.DREADNOUGHT to getBitmapResource(resources, R.drawable.blank_ship)
     )
 
-    private var enemySpaceShipsCount = 1
     private var enemySpaceShips = LinkedSet<EnemySpaceShip>()
 
     private var shots: LinkedSet<Shot> = LinkedSet()
@@ -107,23 +106,36 @@ class GameView(
             } else {
                 shot.update()
 
-                // Checking player collision
-                if (playerSpaceShip!!.hasCollision(shot)) {
-                    playerSpaceShip!!.decrementLife()
-                    if (playerSpaceShip!!.isDestroyed()) {
-                        stopGame()
+                updateCoroutineScope.launch {
+                    if (!enemySpaceShips.none { playerSpaceShip?.hasCollision(it) == true }){
+                        playerSpaceShip!!.decrementLife()
+                        if (playerSpaceShip!!.isDestroyed()) {
+                            stopGame()
+                        }
                     }
-                    shots.remove(shot)
                 }
 
-                // Checking enemySpaceShip collisions
-                for (enemySpaceShip in enemySpaceShips) {
-                    if (enemySpaceShip.hasCollision(shot)) {
-                        enemySpaceShip.decrementLife()
-                        if (enemySpaceShip.isDestroyed()) {
-                            enemySpaceShips.remove(enemySpaceShip)
+                updateCoroutineScope.launch {
+                    // Checking player collision
+                    if (playerSpaceShip!!.hasCollision(shot)) {
+                        playerSpaceShip!!.decrementLife()
+                        if (playerSpaceShip!!.isDestroyed()) {
+                            stopGame()
                         }
                         shots.remove(shot)
+                    }
+                }
+
+                updateCoroutineScope.launch {
+                    // Checking enemySpaceShip collisions
+                    for (enemySpaceShip in enemySpaceShips) {
+                        if (enemySpaceShip.hasCollision(shot)) {
+                            enemySpaceShip.decrementLife()
+                            if (enemySpaceShip.isDestroyed()) {
+                                enemySpaceShips.remove(enemySpaceShip)
+                            }
+                            shots.remove(shot)
+                        }
                     }
                 }
             }
@@ -133,7 +145,8 @@ class GameView(
     override fun draw(canvas: Canvas) {
         /* Method that draw every frame on canvas */
         super.draw(canvas)
-        canvas.drawRGB(255,255,255)
+        canvas.drawRGB(255, 255, 255)
+
         if (enemySpaceShips.isEmpty()) {
             GameView.currentLevel++
             enemySpaceShips = LinkedSet<EnemySpaceShip>()
