@@ -14,11 +14,11 @@ import com.game.R
 import com.game.entity.*
 import com.game.entity.SpaceShip.Companion.getBitmapResource
 import com.game.level.GameLevel
+import com.game.level.GameMap
 import com.game.startup.GameOver
 import com.game.startup.Startup
 import com.game.utils.LinkedSet
 import kotlinx.coroutines.*
-import kotlin.random.Random
 
 class GameView(
     context: Context,
@@ -26,7 +26,7 @@ class GameView(
 ) : SurfaceView(context, attributes), SurfaceHolder.Callback {
 
     companion object {
-        var currentLevelInteger = 6
+        var currentLevelInteger = 1
     }
 
     private val thread: GameThread
@@ -36,11 +36,11 @@ class GameView(
     private val currentLevel: GameLevel = GameLevel(currentLevelInteger)
     private var playerSpaceShip: PlayerSpaceShip? = null
     private val enemySpaceShipBitmaps: Map<SpaceShipType, Bitmap> = mapOf(
-        SpaceShipType.CORVETTE to getBitmapResource(resources, R.drawable.corvette_spaceship),
+        SpaceShipType.CORVETTE to getBitmapResource(resources, R.drawable.corvette),
         SpaceShipType.PLAYER to getBitmapResource(resources, R.drawable.player_spaceship),
-        SpaceShipType.INTERDICTOR to getBitmapResource(resources, R.drawable.enemy_ship),
-        SpaceShipType.VALIANT to getBitmapResource(resources, R.drawable.blank_ship),
-        SpaceShipType.DREADNOUGHT to getBitmapResource(resources, R.drawable.blank_ship)
+        SpaceShipType.INTERDICTOR to getBitmapResource(resources, R.drawable.interdictor),
+        SpaceShipType.VALIANT to getBitmapResource(resources, R.drawable.valiant),
+        SpaceShipType.DREADNOUGHT to getBitmapResource(resources, R.drawable.dreadnought)
     )
 
     private var enemySpaceShips = LinkedSet<EnemySpaceShip>()
@@ -172,13 +172,13 @@ class GameView(
         (context as Activity).finish()
     }
 
-    private fun drawGameObjects() {
-        /* Draw game object for the first time */
+    private fun addGameObjects() {
+        val gameMap = GameMap(context, screenWidth).generateMap(currentLevel)
+        /* Add game objects to their containers  */
         if (enemySpaceShips.isEmpty()) {
             var positionX = 100
             var positionY = 0
             // Draw Corvettes
-//            TODO("Add different coefficients to positionX on SpaceShipType")
             for (iterator in 0 until currentLevel.corvetteCount) {
                 enemySpaceShips.add(
                     EnemySpaceShip(
@@ -240,7 +240,7 @@ class GameView(
     }
 
     override fun surfaceCreated(holder: SurfaceHolder) {
-        drawGameObjects()
+        addGameObjects()
 
         thread.setRunning(true)
         updateThread.setRunning(true)

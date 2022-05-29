@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Path
 import android.util.Log
 import com.game.R
 
@@ -20,6 +21,10 @@ abstract class SpaceShip(
         fun getBitmapResource(resources: Resources, param: Int): Bitmap {
             return BitmapFactory.decodeResource(resources, param, bitmapOptions)
         }
+
+        fun getBitmapResource(filePath: String): Bitmap {
+            return BitmapFactory.decodeFile(filePath)
+        }
     }
 
 
@@ -27,8 +32,8 @@ abstract class SpaceShip(
         yVelocity = when (spaceShipType) {
             SpaceShipType.PLAYER -> 45
             SpaceShipType.CORVETTE -> 1
-            SpaceShipType.INTERDICTOR -> 2
-            SpaceShipType.VALIANT -> 3
+            SpaceShipType.VALIANT -> 2
+            SpaceShipType.INTERDICTOR -> 3
             SpaceShipType.DREADNOUGHT -> 4
         }
         spaceShipLife = when (spaceShipType) {
