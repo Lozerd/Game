@@ -34,7 +34,7 @@ abstract class SpaceShip(
             SpaceShipType.CORVETTE -> 1
             SpaceShipType.VALIANT -> 2
             SpaceShipType.INTERDICTOR -> 3
-            SpaceShipType.DREADNOUGHT -> 4
+            SpaceShipType.DREADNOUGHT -> 3
         }
         spaceShipLife = when (spaceShipType) {
             SpaceShipType.PLAYER -> 20

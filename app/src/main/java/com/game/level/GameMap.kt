@@ -3,8 +3,10 @@ package com.game.level
 import android.content.Context
 import android.graphics.Bitmap
 import com.game.R
+import com.game.entity.EnemySpaceShip
 import com.game.entity.SpaceShip
 import com.game.entity.SpaceShipType
+import com.game.utils.LinkedSet
 
 class GameMap(context: Context, private val screenWidth: Int) {
 
@@ -42,7 +44,10 @@ class GameMap(context: Context, private val screenWidth: Int) {
             currentSpaceShipSymbol = getSpaceShipSymbol(spaceShipType)
             spaceShipRowCount = gameLevel.shipCountMap[spaceShipType]!!
             if (spaceShipRowCount != 0) {
-                spaceShipRowCount = getMaxShipInRowCount(spaceShipType) / spaceShipRowCount
+                spaceShipRowCount.let {
+                    val currentSpaceShipRowMaxCount = getMaxShipInRowCount(spaceShipType)
+                    if (currentSpaceShipRowMaxCount >= it) it else currentSpaceShipRowMaxCount
+                }
                 for (counter in 0..spaceShipRowCount) {
                     currentRow[(spaceShipRowMaxCount - counter - 1) / 2] = currentSpaceShipSymbol
                 }
@@ -51,6 +56,38 @@ class GameMap(context: Context, private val screenWidth: Int) {
             }
         }
         return levelMap
+    }
+
+    fun load(enemySpaceShips: LinkedSet<EnemySpaceShip>, currentLevel: GameLevel) {
+        val map = generateMap(currentLevel)
+        var positionX = 0
+        var positionY = 0
+        var currentSpaceShipWidth = 0
+        var currentEntity: SpaceShipType
+        var currentEntityBitmap: Bitmap
+
+        for (row: String in map) {
+            currentEntity = getSpaceShipFromSymbol(row.first { it != "#".single() })
+            currentEntityBitmap = enemySpaceShipBitmaps[currentEntity]!!
+            currentSpaceShipWidth = currentEntityBitmap.width
+            positionX = currentSpaceShipWidth
+
+            for (entity: Char in row) {
+                if (entity != "#".single()) {
+                    enemySpaceShips.add(
+                        EnemySpaceShip(
+                            currentEntityBitmap,
+                            currentEntity,
+                            positionX,
+                            positionY
+                        )
+                    )
+                }
+                positionX += currentSpaceShipWidth
+            }
+            positionX = 0
+            positionY += 100
+        }
     }
 
     private fun getMaxShipInRowCount(spaceShipType: SpaceShipType): Int = when (spaceShipType) {
@@ -68,5 +105,14 @@ class GameMap(context: Context, private val screenWidth: Int) {
         SpaceShipType.INTERDICTOR -> "2"
         SpaceShipType.VALIANT -> "3"
         SpaceShipType.DREADNOUGHT -> "4"
+    }
+
+    private fun getSpaceShipFromSymbol(symbol: Char) = when (symbol) {
+        "0".single() -> SpaceShipType.PLAYER
+        "1".single() -> SpaceShipType.CORVETTE
+        "2".single() -> SpaceShipType.INTERDICTOR
+        "3".single() -> SpaceShipType.VALIANT
+        "4".single() -> SpaceShipType.DREADNOUGHT
+        else -> SpaceShipType.PLAYER
     }
 }

@@ -29,7 +29,7 @@ class GameView(
         var currentLevelInteger = 1
     }
 
-    private val thread: GameThread
+    private val gameThread: GameThread
     private val updateThread: UpdateThread
     private val updateCoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
@@ -40,7 +40,7 @@ class GameView(
         SpaceShipType.PLAYER to getBitmapResource(resources, R.drawable.player_spaceship),
         SpaceShipType.INTERDICTOR to getBitmapResource(resources, R.drawable.interdictor),
         SpaceShipType.VALIANT to getBitmapResource(resources, R.drawable.valiant),
-        SpaceShipType.DREADNOUGHT to getBitmapResource(resources, R.drawable.dreadnought)
+        SpaceShipType.DREADNOUGHT to getBitmapResource(resources, R.drawable.dreadnought_big)
     )
 
     private var enemySpaceShips = LinkedSet<EnemySpaceShip>()
@@ -52,7 +52,7 @@ class GameView(
 
     init {
         holder.addCallback(this)
-        thread = GameThread(holder, this)
+        gameThread = GameThread(holder, this)
         updateThread = UpdateThread(this)
     }
 
@@ -158,7 +158,7 @@ class GameView(
 
     private fun startNextLevel() {
         /* Method redirects to next level through Intent to Startup class */
-        thread.setRunning(false)
+        gameThread.setRunning(false)
         updateThread.setRunning(false)
         context.startActivity(Intent(context, Startup::class.java))
         (context as Activity).finish()
@@ -166,14 +166,15 @@ class GameView(
 
     private fun stopGame() {
         /* Method redirects to Game Over screen */
-        thread.setRunning(false)
+        gameThread.setRunning(false)
         updateThread.setRunning(false)
         context.startActivity(Intent(context, GameOver::class.java))
         (context as Activity).finish()
     }
 
     private fun addGameObjects() {
-        val gameMap = GameMap(context, screenWidth).generateMap(currentLevel)
+//        val gameMap = GameMap(context, screenWidth)
+//        gameMap.load(enemySpaceShips, currentLevel)
         /* Add game objects to their containers  */
         if (enemySpaceShips.isEmpty()) {
             var positionX = 100
@@ -242,11 +243,11 @@ class GameView(
     override fun surfaceCreated(holder: SurfaceHolder) {
         addGameObjects()
 
-        thread.setRunning(true)
+        gameThread.setRunning(true)
         updateThread.setRunning(true)
 
-        if (thread.state == Thread.State.NEW || thread.state == Thread.State.TERMINATED) {
-            thread.start()
+        if (gameThread.state == Thread.State.NEW || gameThread.state == Thread.State.TERMINATED) {
+            gameThread.start()
             updateThread.start()
         }
     }
@@ -257,8 +258,8 @@ class GameView(
         var retry = true
         while (retry) {
             try {
-                thread.setRunning(false)
-                thread.join()
+                gameThread.setRunning(false)
+                gameThread.join()
                 updateThread.setRunning(false)
                 updateThread.join()
             } catch (e: Exception) {

@@ -1,7 +1,5 @@
 package com.game.level
 
-import com.game.R
-import com.game.entity.SpaceShip
 import com.game.entity.SpaceShipType
 
 class GameLevel(val id: Int) {
@@ -14,13 +12,13 @@ class GameLevel(val id: Int) {
         2 -> 2
         3 -> 3
         4 -> 4
-        5 -> 6
+        5 -> 5
         else -> 6
     }
     val shipCountMap: Map<SpaceShipType, Int> = mapOf(
         SpaceShipType.PLAYER to 1,
-        SpaceShipType.CORVETTE to 3 * levelCoefficient,
-        SpaceShipType.INTERDICTOR to 2 * levelCoefficient,
+        SpaceShipType.CORVETTE to if (id <= 3) 3 * levelCoefficient else 0,
+        SpaceShipType.INTERDICTOR to if (id <= 4) 2 * levelCoefficient else 0,
         SpaceShipType.VALIANT to if (id >= 3) levelCoefficient / 2 else 0,
         SpaceShipType.DREADNOUGHT to if (id > 4) 1 else 0
     )
